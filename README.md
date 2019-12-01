@@ -18,3 +18,7 @@ https://pastak.github.io/masawada-element/example/
 - `autoRotate`: auto rotation masawada
 - `cameraPosition`: camera position with x, y, z separated comma
 - `rotation`: masawada rotation with x, y, z separated comma
+
+## model file License
+
+https://github.com/masawada/masawada-3d
