@@ -59,12 +59,12 @@ class MasawadaElement extends HTMLElement {
     this.scene.add(ambientLight);
 
     const textureLoader = new THREE.TextureLoader();
-    const map = textureLoader.load('/models/masawada.png');
+    const map = textureLoader.load('https://pastak.github.io/masawada-element/models/masawada.png');
     const material = new THREE.MeshPhongMaterial({ map });
 
     const loader = new OBJLoader();
     loader.load(
-      '/models/masawada.obj',
+      'https://pastak.github.io/masawada-element/models/masawada.obj',
       (obj) => {
         this.obj = obj;
         this.obj.position.set(0, 0, 10);
