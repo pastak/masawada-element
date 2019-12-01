@@ -16,12 +16,14 @@ class MasawadaElement extends HTMLElement {
 
   private scene?: THREE.Scene
 
-  static get observedAttributes() { return ['rotation']; }
+  static get observedAttributes() { return ['rotation', 'cameraposition']; }
 
   attributeChangedCallback(name: string, _oldVal: string, newVal: string) {
-    if (!this.obj) return;
+    if (!this.obj || !this.camera) return;
+    console.log(name, newVal);
     if (name === 'rotation') this.obj.rotation.set(...attr2vertex(newVal));
-    if (this.renderer && this.scene && this.camera) { this.renderer.render(this.scene, this.camera); }
+    if (name === 'cameraposition') this.camera.position.set(...attr2vertex(newVal));
+    if (this.renderer && this.scene) { this.renderer.render(this.scene, this.camera); }
   }
 
   connectedCallback() {
@@ -44,16 +46,13 @@ class MasawadaElement extends HTMLElement {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(width, height);
 
-    this.appendChild(this.renderer.domElement);
+    this.textContent = 'now loading masawada';
 
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(120, width / height, 1, 100);// 視野角,縦横比,手前の距離,奥の距離
-    if (this.hasAttribute('cameraPosition')) {
-      this.camera.position.set(...attr2vertex(this.getAttribute('cameraPosition')));
-    } else {
-      this.camera.position.set(0, 10, 20);
-    }
+    this.camera = new THREE.PerspectiveCamera(120, width / height, 0.01, 100);// 視野角,縦横比,手前の距離,奥の距離
+    const pos: [number, number, number] = this.hasAttribute('cameraposition') ? attr2vertex(this.getAttribute('cameraposition')) : [0, 10, 20];
+    this.camera.position.set(...pos);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     this.scene.add(ambientLight);
@@ -66,6 +65,8 @@ class MasawadaElement extends HTMLElement {
     loader.load(
       'https://pastak.github.io/masawada-element/models/masawada.obj',
       (obj) => {
+        this.textContent = '';
+        this.appendChild(this.renderer.domElement);
         this.obj = obj;
         this.obj.position.set(0, 0, 10);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,13 +74,14 @@ class MasawadaElement extends HTMLElement {
           if (node.isMesh) node.material = material;
         });
         this.scene && this.scene.add(this.obj);
+        const rotate: [number, number, number] = this.hasAttribute('rotation') ? attr2vertex(this.getAttribute('rotation')) : [0, 0, 0];
+        this.obj.rotation.set(...rotate);
 
         const animate = () => {
           requestAnimationFrame(animate);
           if (autoRotate) obj.rotation.y += 0.01;
           if (this.renderer && this.scene && this.camera) this.renderer.render(this.scene, this.camera);
         };
-
         animate();
       },
     );

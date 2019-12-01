@@ -23,6 +23,7 @@ module.exports = {
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
     "no-param-reassign": "off",
+    "max-len": "off",
     "no-unused-expressions": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error", {
