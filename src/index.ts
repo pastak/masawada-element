@@ -65,6 +65,7 @@ class MasawadaElement extends HTMLElement {
     loader.load(
       'https://pastak.github.io/masawada-element/models/masawada.obj',
       (obj) => {
+        if (!this.renderer) return;
         this.textContent = '';
         this.appendChild(this.renderer.domElement);
         this.obj = obj;
