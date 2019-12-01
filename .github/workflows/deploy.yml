@@ -1,16 +1,43 @@
 name: Build and Deploy
 on: [push]
 jobs:
-  build-and-deploy:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Install
+      run: |
+        npm ci
+    - name: Build
+      run: |
+        npx webpack --mode=production
+    - name: Prepare
+      run: |
+        mkdir site
+        cp -R models site/models
+        cp -R dist site/dist
+        cp -R example site/example
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: site
+        path: site
+  deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
 
+    - name: Download Artifacts # The built project is downloaded into the 'site' folder.
+      uses: actions/download-artifact@v1
+      with:
+        name: site
+
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BASE_BRANCH: master # The branch the action should deploy from.
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: ./ # The folder the action should deploy.
+        BRANCH: gh-pages
+        FOLDER: 'site'
