@@ -2,7 +2,7 @@ module.exports = {
   mode: 'development',
   entry: "./src/index.ts",
   output: {
-    filename: "dist/bundle.js"
+    filename: "bundle.js"
   },
   resolve: {
     extensions: ['.js', ".ts"]
